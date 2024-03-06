@@ -40,7 +40,7 @@ const LoginPage = () => {
                   required: "This field is required",
                   minLength: {
                     value: 3,
-                    message: "Username must have at least 3 characters"
+                    message: "Username must have at least 5 characters"
                   }
                 })}
                 type="text"
