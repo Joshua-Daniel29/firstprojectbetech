@@ -1,22 +1,29 @@
+"use client";
+
 import React from "react";
 import { useForm } from "react-hook-form";
+import { loginUser } from "@/redux/features/authslice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "@/redux/store";
 
 type FormFields = {
-  userName: string,
-  password: string
+  username: string;
+  password: string;
 };
 
-const LoginPage = () => { 
-  
+const LoginPage = () => {
+  const dispatch = useDispatch<AppDispatch>();
+
   const {
     register,
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<FormFields>();
 
-  const onSubmit = async(data: FormFields) => {
-    await new Promise((resolve)=>setTimeout(resolve, 1000));
-    console.log(data)
+  const submitForm = async (data: FormFields) => {
+    await dispatch(loginUser(data)).then((result: any) => {
+      console.log('result-login', result)
+    });
   };
 
   return (
@@ -27,7 +34,7 @@ const LoginPage = () => {
             Log in to your account
           </h2>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit(submitForm)}>
           <input type="hidden" name="remember" value="true" />
           <div className="rounded-md shadow-sm -space-y-px">
             <div className="mb-5">
@@ -36,20 +43,20 @@ const LoginPage = () => {
               </label>
               <input
                 id="userName"
-                {...register("userName", { 
+                {...register("username", {
                   required: "This field is required",
                   minLength: {
                     value: 3,
-                    message: "Username must have at least 5 characters"
-                  }
+                    message: "Username must have at least 5 characters",
+                  },
                 })}
                 type="text"
                 autoComplete="username"
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
                 placeholder="Username"
               />
-              {errors.userName && (
-                <span className="text-red-500">{errors.userName.message}</span>
+              {errors.username && (
+                <span className="text-red-500">{errors.username.message}</span>
               )}
             </div>
             <div>
@@ -58,12 +65,12 @@ const LoginPage = () => {
               </label>
               <input
                 id="password"
-                {...register("password", { 
-                  required: 'This field is required', 
-                  minLength:{
+                {...register("password", {
+                  required: "This field is required",
+                  minLength: {
                     value: 8,
-                    message: "Password must have at least 8 characters"
-                  }
+                    message: "Password must have at least 8 characters",
+                  },
                 })}
                 type="password"
                 autoComplete="current-password"
@@ -95,11 +102,8 @@ const LoginPage = () => {
             >
               <span className="absolute left-0 inset-y-0 flex items-center pl-3">
                 {/* Heroicon name: lock-closed */}
-                
               </span>
-              {
-                isSubmitting ? 'Logging In...' : 'Log in'
-              }
+              {isSubmitting ? "Logging In..." : "Log in"}
             </button>
           </div>
         </form>

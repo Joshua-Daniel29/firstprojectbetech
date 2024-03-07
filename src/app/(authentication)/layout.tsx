@@ -1,3 +1,4 @@
+import { RaduxProvider } from "@/redux/provider";
 import React from "react";
 
 export default function Authentication({
@@ -5,5 +6,5 @@ export default function Authentication({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <main>{children}</main>;
+  return <main><RaduxProvider>{children}</RaduxProvider></main>;
 }
