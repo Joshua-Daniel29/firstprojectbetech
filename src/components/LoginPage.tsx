@@ -1,10 +1,11 @@
-"use client";
-
 import React from "react";
 import { useForm } from "react-hook-form";
 import { loginUser } from "@/redux/features/authslice";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "@/redux/store";
+import { useRouter } from "next/navigation";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 type FormFields = {
   username: string;
@@ -13,6 +14,7 @@ type FormFields = {
 
 const LoginPage = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const router = useRouter();
 
   const {
     register,
@@ -20,10 +22,20 @@ const LoginPage = () => {
     formState: { errors, isSubmitting },
   } = useForm<FormFields>();
 
-  const submitForm = async (data: FormFields) => {
-    await dispatch(loginUser(data)).then((result: any) => {
-      console.log('result-login', result)
-    });
+  const onSubmit = async (data: FormFields) => {
+    try {
+      const result = await dispatch(loginUser(data));
+      if (result.meta.requestStatus === "fulfilled") {
+        // Login successful
+        toast.success("Login successful");
+        router.push("/dashboard");
+      } else {
+        // Login failed
+        toast.error("Invalid login, check your details");
+      }
+    } catch (error) {
+      toast.error("An error occurred while logging in");
+    }
   };
 
   return (
@@ -34,7 +46,7 @@ const LoginPage = () => {
             Log in to your account
           </h2>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit(submitForm)}>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit(onSubmit)}>
           <input type="hidden" name="remember" value="true" />
           <div className="rounded-md shadow-sm -space-y-px">
             <div className="mb-5">
@@ -68,7 +80,7 @@ const LoginPage = () => {
                 {...register("password", {
                   required: "This field is required",
                   minLength: {
-                    value: 8,
+                    value: 6,
                     message: "Password must have at least 8 characters",
                   },
                 })}
@@ -108,6 +120,7 @@ const LoginPage = () => {
           </div>
         </form>
       </div>
+      <ToastContainer />
     </div>
   );
 };
