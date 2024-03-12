@@ -7,7 +7,6 @@ export const loginUser = createAsyncThunk(
   async (credentials: any) => {
     const request = await ApiAuth.post("/login", credentials);
     const response = await request.data;
-    // console.log('login-response', response);
     return response;
   }
 )
